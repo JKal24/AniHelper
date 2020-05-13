@@ -13,19 +13,22 @@ namespace AniHelper.AniClasses
     class GenreCollect
     {
 
-        public List<String> Genres = new List<string>();
+        public List<String> selectedGenres = new List<string>();
 
         private String[] availableGenres = {"Action", "Adventure", "Romance", "Comedy", "Isekai", 
             "Horror", "Drama", "Ecchi", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",
-            "Slice of Life", "School", "Shounen", "Sports", "Sci-Fi", "Supernatural", "Parody", "Mystery",
+            "SliceOfLife", "School", "Shounen", "Sports", "SciFi", "Supernatural", "Parody", "Mystery",
             "Shoujo", "Space", "Military"
         };
 
-        public List<String> Get_genres { get; set; }
+        public String[] get_available_genres()
+        {
+            return availableGenres;
+        }
 
         public void Add_genre(String val)
         {
-            Genres.Add(val);
+            selectedGenres.Add(val);
         }
 
         public void getData()
@@ -38,22 +41,6 @@ namespace AniHelper.AniClasses
             Console.WriteLine(html.Result);
 
             Console.ReadLine();
-        }
-
-        public void makeGenreButtons(String[] buttonNames)
-        {
-            /* initialize starting screen with the check buttons to choose from */
-
-            foreach (String button in buttonNames)
-            {
-                CheckBox box = new CheckBox();
-
-                box.Name = button;
-                box.Content = button;
-                box.Width = 140;
-
-                
-            }
         }
     }
 }
