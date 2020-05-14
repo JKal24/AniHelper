@@ -16,31 +16,39 @@ namespace AniHelper.AniClasses
         public List<String> selectedGenres = new List<string>();
 
         private String[] availableGenres = {"Action", "Adventure", "Romance", "Comedy", "Isekai", 
-            "Horror", "Drama", "Ecchi", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",
+            "Horror", "Drama", "Kids", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",
             "SliceOfLife", "School", "Shounen", "Sports", "SciFi", "Supernatural", "Parody", "Mystery",
-            "Shoujo", "Space", "Military"
-        };
+            "Shoujo", "Space", "Military"};
 
         public String[] get_available_genres()
         {
             return availableGenres;
         }
 
-        public void Add_genre(String val)
+        public int get_selected_genres_length()
         {
-            selectedGenres.Add(val);
+            return selectedGenres.Count;
         }
 
-        public void getData()
+        public void add_genre(String val)
         {
-            String url = "https://myanimelist.net/anime/genre/1/Action";
+            if (Array.IndexOf(availableGenres, val) != -1)
+            {
+                selectedGenres.Add(val);
+            }
+        }
 
+        public void remove_genre(String val)
+        {
+            selectedGenres.Remove(val);
+        }
+
+        public void getData(String url)
+        {
             var http = new HttpClient();
             var html = http.GetStringAsync(url);
 
-            Console.WriteLine(html.Result);
-
-            Console.ReadLine();
+            
         }
     }
 }

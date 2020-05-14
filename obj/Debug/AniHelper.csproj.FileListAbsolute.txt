@@ -13,3 +13,5 @@ E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.GenerateResource.cache
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.CoreCompileInputs.cache
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.exe
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.pdb
+E:\Testing\AniHelper\AniHelper\obj\Debug\SecondWindow.g.cs
+E:\Testing\AniHelper\AniHelper\obj\Debug\SecondWindow.baml
