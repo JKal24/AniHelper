@@ -42,13 +42,5 @@ namespace AniHelper.AniClasses
         {
             selectedGenres.Remove(val);
         }
-
-        public void getData(String url)
-        {
-            var http = new HttpClient();
-            var html = http.GetStringAsync(url);
-
-            
-        }
     }
 }

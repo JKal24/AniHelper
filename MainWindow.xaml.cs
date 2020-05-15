@@ -1,18 +1,7 @@
 ﻿using AniHelper.AniClasses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AniHelper
 {
@@ -31,6 +20,20 @@ namespace AniHelper
             InitializeComponent();
 
             addGenreButtons(collector.get_available_genres());
+
+            addSearchFunction();
+        }
+
+        private void addSearchFunction()
+        {
+            TextBlock info = new TextBlock();
+            TextBox input = new TextBox();
+
+            info.Text = "List any anime that you're interested in";
+            input.Text = "Enter here";
+
+            MainPanel.Children.Add(info);
+            MainPanel.Children.Add(input);
         }
 
         private void addGenreButtons(String[] buttonNames)
@@ -64,18 +67,13 @@ namespace AniHelper
         {
             CheckBox box = (CheckBox)sender;
 
-            if (collector.get_selected_genres_length() >= 5)
+            if ((bool)box.IsChecked)
             {
-                if ((box.IsChecked == true))
+                if (collector.get_selected_genres_length() >= 5)
                 {
-                    /* gives error message when first triggered */
-                    if (errorMessage)
+                    if (!errorMessage)
                     {
-                        box.IsChecked = false;
-                        return;
-                    }
-                    else
-                    {
+                        /* make a message stating that too many genres were selected */
                         TextBlock message = new TextBlock();
                         message.Text = "Too many genres selected.";
                         exceededChoices.Children.Add(message);
@@ -90,33 +88,30 @@ namespace AniHelper
                         MainPanel.Children.Add(exceededChoices);
 
                         errorMessage = true;
-                        return;
                     }
-                } else
-                {
-                    /* continue implementing removal of a check, in the case of 5 present 
-                     * checked checkboxes */
-                    errorMessage = false;
-                }
 
-            if ((bool)box.IsChecked)
-            {
+                    box.IsChecked = false;
+                    return;
+                }
                 collector.add_genre(box.Content.ToString());
-            } else
+            }
+            else
             {
                 collector.remove_genre(box.Content.ToString());
             }
+
         }
 
-        private void ContinueChoosing_Click(object sender, RoutedEventArgs e)
+        void ContinueChoosing_Click(object sender, RoutedEventArgs e)
         {
             MainPanel.Children.Remove(exceededChoices);
             exceededChoices = new StackPanel();
+            errorMessage = false;
         }
 
         private void NextPart_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private int[] grid_next_position(int[] r_c)
@@ -125,7 +120,8 @@ namespace AniHelper
             {
                 r_c[1] = 0;
                 r_c[0] += 1;
-            } else
+            }
+            else
             {
                 r_c[1] += 1;
             }
