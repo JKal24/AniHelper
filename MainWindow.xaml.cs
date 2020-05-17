@@ -28,12 +28,24 @@ namespace AniHelper
         {
             TextBlock info = new TextBlock();
             TextBox input = new TextBox();
+            Button inputButton = new Button();
 
-            info.Text = "List any anime that you're interested in";
-            input.Text = "Enter here";
+            info.Text = "List any anime that you've watched";
+            inputButton.Content = "Enter";
+
+            input.Name = "myInput";
+            info.FontSize = 18;
+            info.Width = 300;
+            input.Width = 200;
+            inputButton.Click += InputButton_Click;
 
             MainPanel.Children.Add(info);
             MainPanel.Children.Add(input);
+        }
+
+        private void InputButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ()
         }
 
         private void addGenreButtons(String[] buttonNames)
