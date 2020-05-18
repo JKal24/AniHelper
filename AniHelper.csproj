@@ -56,6 +56,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AniClasses\AniSearch.cs" />
+    <Compile Include="AniClasses\Design.cs" />
+    <Compile Include="AniClasses\GenreError.cs" />
+    <Compile Include="AniClasses\MainWindowFn.cs" />
     <Compile Include="SecondWindow.xaml.cs">
       <DependentUpon>SecondWindow.xaml</DependentUpon>
     </Compile>

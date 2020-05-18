@@ -13,12 +13,18 @@ namespace AniHelper.AniClasses
     class GenreCollect
     {
 
-        public List<String> selectedGenres = new List<string>();
+        private AniSearch searcher = new AniSearch();
+        public Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
 
         private String[] availableGenres = {"Action", "Adventure", "Romance", "Comedy", "Isekai", 
             "Horror", "Drama", "Kids", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",
             "SliceOfLife", "School", "Shounen", "Sports", "SciFi", "Supernatural", "Parody", "Mystery",
             "Shoujo", "Space", "Military"};
+
+        public void conductSearch(TextBox input)
+        {
+            _ = searcher.getSearchData(input.Text);
+        }
 
         public String[] get_available_genres()
         {
@@ -30,11 +36,14 @@ namespace AniHelper.AniClasses
             return selectedGenres.Count;
         }
 
-        public void add_genre(String val)
+        public void add_genre(String inputKey)
         {
-            if (Array.IndexOf(availableGenres, val) != -1)
+            if (selectedGenres.ContainsKey(inputKey))
             {
-                selectedGenres.Add(val);
+                selectedGenres[inputKey] += 1;
+            } else
+            {
+                selectedGenres.Add(inputKey, 1);
             }
         }
 
@@ -42,5 +51,7 @@ namespace AniHelper.AniClasses
         {
             selectedGenres.Remove(val);
         }
+
+
     }
 }
