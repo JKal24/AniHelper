@@ -12,6 +12,7 @@ namespace AniHelper.AniClasses
     {
 
         public String currentUrl;
+        public String imageUrl;
 
         public async Task getSearchData(String searchExtension)
         {
@@ -36,8 +37,15 @@ namespace AniHelper.AniClasses
 
         private String getMainSite(String url)
         {
-            Match getSiteInfo = Regex.Match(url, @"https?://myanimelist.net/anime/\d*\/\w*");
+            Match getSiteInfo = Regex.Match(url, @"https://?myanimelist.net/anime/\d*\/\w*");
             return getSiteInfo.Value;
+        }
+
+        private async Task getImage()
+        {
+            var http = new HttpClient();
+            String image = await http.GetStringAsync(currentUrl);
+            imageUrl = Regex.Match(image, @"https://?cdn.myanimelist.net/images/anime/\w*.jpg").Value;
         }
     }
 }

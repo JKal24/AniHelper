@@ -13,8 +13,8 @@ namespace AniHelper.AniClasses
     class GenreCollect
     {
 
-        private AniSearch searcher = new AniSearch();
-        public Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
+        public AniSearch searcher = new AniSearch();
+        private Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
 
         private String[] availableGenres = {"Action", "Adventure", "Romance", "Comedy", "Isekai", 
             "Horror", "Drama", "Kids", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",

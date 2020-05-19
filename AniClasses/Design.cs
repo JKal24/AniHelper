@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace AniHelper.AniClasses
 {
@@ -15,7 +16,6 @@ namespace AniHelper.AniClasses
 
         private StackPanel MainPanel;
         private TextBox input = new TextBox();
-        private bool errorMessage = false;
 
         /* set a direct link to the main window's panel */
         public void setMainPanel(StackPanel setPanel)
@@ -40,14 +40,24 @@ namespace AniHelper.AniClasses
 
             inputButton.Width = 125;
             inputButton.Click += InputButton_Click;
+            inputButton.KeyDown += InputButton_KeyDown;
 
             MainPanel.Children.Add(info);
             MainPanel.Children.Add(input);
             MainPanel.Children.Add(inputButton);
         }
+
+        private void InputButton_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                InputButton_Click(sender, e);
+            }
+        }
+
         private void InputButton_Click(object sender, RoutedEventArgs e)
         {
-            if (input.Text != "")
+            if (input.Text == "")
             {
                 return;
             }
