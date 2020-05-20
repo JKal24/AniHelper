@@ -9,10 +9,10 @@ using System.Windows.Input;
 
 namespace AniHelper.AniClasses
 {
-    class Design
+    public class Design
     {
         public GenreCollect collector = new GenreCollect();
-        public GenreError errorOverflow = new GenreError();
+        private GenreError errorOverflow = new GenreError();
 
         private StackPanel MainPanel;
         private TextBox input = new TextBox();
@@ -29,7 +29,7 @@ namespace AniHelper.AniClasses
             TextBlock info = new TextBlock();
             Button inputButton = new Button();
 
-            info.Text = "List up to 5 anime that you've watched";
+            info.Text = "List up to 3 anime that you've watched";
             inputButton.Content = "Enter";
 
             info.FontSize = 18;
@@ -39,30 +39,32 @@ namespace AniHelper.AniClasses
             input.Width = 200;
 
             inputButton.Width = 125;
-            inputButton.Click += InputButton_Click;
+            inputButton.Click += InputButton_ClickAsync;
             inputButton.KeyDown += InputButton_KeyDown;
 
             MainPanel.Children.Add(info);
             MainPanel.Children.Add(input);
             MainPanel.Children.Add(inputButton);
+            makeImgContainer();
         }
 
         private void InputButton_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                InputButton_Click(sender, e);
+                InputButton_ClickAsync(sender, e);
             }
         }
 
-        private void InputButton_Click(object sender, RoutedEventArgs e)
+        private async void InputButton_ClickAsync(object sender, RoutedEventArgs e)
         {
             if (input.Text == "")
             {
                 return;
             }
 
-            collector.conductSearch(input);
+            await collector.searcher.getSearchData(input.Text);
+            await collector.searcher.addImage();
         }
 
         public void addGenreButtons(Grid genreGrid)
@@ -92,7 +94,7 @@ namespace AniHelper.AniClasses
 
             if ((bool)box.IsChecked)
             {
-                if (collector.get_selected_genres_length() >= 5)
+                if (collector.get_selected_genres_length() >= 3)
                 {
                     errorOverflow.error(MainPanel);
 
@@ -120,6 +122,13 @@ namespace AniHelper.AniClasses
                 r_c[1] += 1;
             }
             return r_c;
+        }
+
+        private void makeImgContainer()
+        {
+            collector.searcher.imagePanel = new StackPanel();
+            collector.searcher.imagePanel.Orientation = Orientation.Horizontal;
+            MainPanel.Children.Add(collector.searcher.imagePanel);
         }
     }
 }

@@ -5,14 +5,16 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace AniHelper.AniClasses
 {
-    class AniSearch
+    public class AniSearch
     {
 
         public String currentUrl;
-        public String imageUrl;
+        public StackPanel imagePanel;
 
         public async Task getSearchData(String searchExtension)
         {
@@ -41,11 +43,17 @@ namespace AniHelper.AniClasses
             return getSiteInfo.Value;
         }
 
-        private async Task getImage()
+        public async Task addImage()
         {
             var http = new HttpClient();
-            String image = await http.GetStringAsync(currentUrl);
-            imageUrl = Regex.Match(image, @"https://?cdn.myanimelist.net/images/anime/\w*.jpg").Value;
+            Image image = new Image();
+            image.Width = 200;
+            String parseImage = await http.GetStringAsync(currentUrl);
+
+            BitmapImage convertImage = new BitmapImage(new Uri(Regex.Match(parseImage,
+                @"https://?cdn.myanimelist.net/images/anime/.*\.jpg").Value));
+            image.Source = convertImage;
+            imagePanel.Children.Add(image);
         }
     }
 }

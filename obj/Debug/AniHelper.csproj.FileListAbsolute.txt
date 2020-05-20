@@ -15,3 +15,7 @@ E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.GenerateResource.cache
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.CoreCompileInputs.cache
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.exe
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.pdb
+E:\Testing\AniHelper\AniHelper\bin\Debug\HtmlAgilityPack.dll
+E:\Testing\AniHelper\AniHelper\bin\Debug\HtmlAgilityPack.pdb
+E:\Testing\AniHelper\AniHelper\bin\Debug\HtmlAgilityPack.xml
+E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.CopyComplete

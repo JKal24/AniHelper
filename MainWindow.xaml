@@ -35,7 +35,7 @@
             
             TextAlignment="Center"
             Padding="5"
-            >What sort of genres are you interested in? Choose up to 5 categories.</TextBlock>
+            >What sort of genres are you interested in? Choose up to 3 categories.</TextBlock>
         <Grid
             Background="AntiqueWhite" x:Name="genreGrid"
             >

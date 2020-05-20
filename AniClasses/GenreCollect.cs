@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace AniHelper.AniClasses
 {
-    class GenreCollect
+    public class GenreCollect
     {
 
         public AniSearch searcher = new AniSearch();
@@ -20,11 +20,6 @@ namespace AniHelper.AniClasses
             "Horror", "Drama", "Kids", "Fantasy", "Magic", "NSFW", "Ecchi", "Historical", "Psychological",
             "SliceOfLife", "School", "Shounen", "Sports", "SciFi", "Supernatural", "Parody", "Mystery",
             "Shoujo", "Space", "Military"};
-
-        public void conductSearch(TextBox input)
-        {
-            _ = searcher.getSearchData(input.Text);
-        }
 
         public String[] get_available_genres()
         {
@@ -51,7 +46,6 @@ namespace AniHelper.AniClasses
         {
             selectedGenres.Remove(val);
         }
-
 
     }
 }
