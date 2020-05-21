@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -14,12 +15,21 @@ namespace AniHelper.AniClasses
         {
             HtmlWeb web = new HtmlWeb();
             var html = web.Load(url);
-            var node = html.;
+            return "beingimplemented";
         }
 
-        private void addToTable()
+        private void getGenres()
         {
             SqlConnection AniConn = new SqlConnection();
+            AniConn.Open();
+
+            SqlCommand getGenre = new SqlCommand(@"use AniHelper SELECT Genre FROM GenreList", AniConn);
+            var getData = getGenre.ExecuteReader();
+
+            while (getData.Read())
+            {
+
+            }
         }
     }
 }

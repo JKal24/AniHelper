@@ -45,7 +45,7 @@ namespace AniHelper.AniClasses
             MainPanel.Children.Add(info);
             MainPanel.Children.Add(input);
             MainPanel.Children.Add(inputButton);
-            makeImgContainer();
+            makeNameContainer();
         }
 
         private void InputButton_KeyDown(object sender, KeyEventArgs e)
@@ -64,7 +64,7 @@ namespace AniHelper.AniClasses
             }
 
             await collector.searcher.getSearchData(input.Text);
-            await collector.searcher.addImage();
+            collector.searcher.addName();
         }
 
         public void addGenreButtons(Grid genreGrid)
@@ -124,11 +124,11 @@ namespace AniHelper.AniClasses
             return r_c;
         }
 
-        private void makeImgContainer()
+        private void makeNameContainer()
         {
-            collector.searcher.imagePanel = new StackPanel();
-            collector.searcher.imagePanel.Orientation = Orientation.Horizontal;
-            MainPanel.Children.Add(collector.searcher.imagePanel);
+            collector.searcher.namePanel = new StackPanel();
+            collector.searcher.namePanel.Orientation = Orientation.Horizontal;
+            MainPanel.Children.Add(collector.searcher.namePanel);
         }
     }
 }

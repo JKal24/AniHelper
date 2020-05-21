@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -14,7 +15,7 @@ namespace AniHelper.AniClasses
     {
 
         public String currentUrl;
-        public StackPanel imagePanel;
+        public StackPanel namePanel;
 
         public async Task getSearchData(String searchExtension)
         {
@@ -43,17 +44,16 @@ namespace AniHelper.AniClasses
             return getSiteInfo.Value;
         }
 
-        public async Task addImage()
+        public void addName()
         {
-            var http = new HttpClient();
-            Image image = new Image();
-            image.Width = 200;
-            String parseImage = await http.GetStringAsync(currentUrl);
+            HtmlWeb http2 = new HtmlWeb();
+            var html = http2.Load(currentUrl);
+            var node = html.DocumentNode.SelectSingleNode("//span[contains(@class, 'title-english')]");
 
-            BitmapImage convertImage = new BitmapImage(new Uri(Regex.Match(parseImage,
-                @"https://?cdn.myanimelist.net/images/anime/.*\.jpg").Value));
-            image.Source = convertImage;
-            imagePanel.Children.Add(image);
+            TextBlock name = new TextBlock();
+            name.Text = node.InnerText;
+            name.Margin = 10;
+            namePanel.Children.Add(name);
         }
     }
 }
