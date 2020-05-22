@@ -19,3 +19,5 @@ E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.CoreCompileInputs.cach
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.csproj.CopyComplete
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.exe
 E:\Testing\AniHelper\AniHelper\obj\Debug\AniHelper.pdb
+E:\Testing\AniHelper\AniHelper\bin\Debug\Dapper.dll
+E:\Testing\AniHelper\AniHelper\bin\Debug\Dapper.xml

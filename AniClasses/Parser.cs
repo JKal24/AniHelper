@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using Dapper;
 using HtmlAgilityPack;
 
 namespace AniHelper.AniClasses
 {
     public class Parser
     {
+
+        StackPanel testPanel;
+
+        public void setPanel(StackPanel appliedPanel)
+        {
+            this.testPanel = appliedPanel;
+        }
         public String returnInfo(String url)
         {
             HtmlWeb web = new HtmlWeb();
@@ -18,18 +28,20 @@ namespace AniHelper.AniClasses
             return "beingimplemented";
         }
 
-        private void getGenres()
+        public String[] getGenres()
         {
-            SqlConnection AniConn = new SqlConnection();
+            IDbConnection AniConn = new System.Data.SqlClient.SqlConnection(connPt("AniHelper"));
             AniConn.Open();
 
-            SqlCommand getGenre = new SqlCommand(@"use AniHelper SELECT Genre FROM GenreList", AniConn);
-            var getData = getGenre.ExecuteReader();
+            String[] genres = AniConn.Query<String>(@"use AniHelper SELECT Genre FROM GenreList").ToArray();
 
-            while (getData.Read())
-            {
+            AniConn.Close();
+            return genres;
+        }
 
-            }
+        public String connPt(String id)
+        {
+            return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
     }
 }

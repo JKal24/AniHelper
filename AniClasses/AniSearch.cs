@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -16,6 +17,7 @@ namespace AniHelper.AniClasses
 
         public String currentUrl;
         public StackPanel namePanel;
+        public bool complete = true;
 
         public async Task getSearchData(String searchExtension)
         {
@@ -44,16 +46,19 @@ namespace AniHelper.AniClasses
             return getSiteInfo.Value;
         }
 
-        public void addName()
+        public HtmlNodeCollection addName()
         {
-            HtmlWeb http2 = new HtmlWeb();
-            var html = http2.Load(currentUrl);
-            var node = html.DocumentNode.SelectSingleNode("//span[contains(@class, 'title-english')]");
+            HtmlWeb httpAccess = new HtmlWeb();
+            var html = httpAccess.Load(currentUrl);
+            var node = html.DocumentNode.SelectSingleNode("//span[@itemprop='name']//text()");
+            var genreNodes = html.DocumentNode.SelectNodes("//span[@itemprop='genre']//text()");
 
             TextBlock name = new TextBlock();
             name.Text = node.InnerText;
-            name.Margin = 10;
+            name.Margin = new Thickness(10);
             namePanel.Children.Add(name);
+            complete = true;
+            return genreNodes;
         }
     }
 }

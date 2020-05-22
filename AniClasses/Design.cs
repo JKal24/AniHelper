@@ -14,8 +14,9 @@ namespace AniHelper.AniClasses
         public GenreCollect collector = new GenreCollect();
         private GenreError errorOverflow = new GenreError();
 
-        private StackPanel MainPanel;
+        public StackPanel MainPanel;
         private TextBox input = new TextBox();
+        private Parser parse = new Parser();
 
         /* set a direct link to the main window's panel */
         public void setMainPanel(StackPanel setPanel)
@@ -45,7 +46,10 @@ namespace AniHelper.AniClasses
             MainPanel.Children.Add(info);
             MainPanel.Children.Add(input);
             MainPanel.Children.Add(inputButton);
+
             makeNameContainer();
+            parse.setPanel(MainPanel);
+
         }
 
         private void InputButton_KeyDown(object sender, KeyEventArgs e)
@@ -58,13 +62,14 @@ namespace AniHelper.AniClasses
 
         private async void InputButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            if (input.Text == "")
+            if (input.Text == "" || collector.searcher.complete == false)
             {
                 return;
             }
 
+            collector.searcher.complete = false;
             await collector.searcher.getSearchData(input.Text);
-            collector.searcher.addName();
+            collector.add_named_genres(collector.searcher.addName());
         }
 
         public void addGenreButtons(Grid genreGrid)
