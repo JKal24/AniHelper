@@ -15,25 +15,24 @@ namespace AniHelper.AniClasses
 {
     public class GenreCollect
     {
+        public AniSearch searcher = new AniSearch();
+        private Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
+        private String[] availableGenres;
+        public int checkedBoxes = 0;
 
         public GenreCollect()
         {
             assignGenres();
         }
 
-        public AniSearch searcher = new AniSearch();
-        private Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
-
-        private String[] availableGenres;
-
         public String[] get_available_genres()
         {
             return availableGenres;
         }
 
-        public int get_selected_genres_length()
+        public int get_checkbox_selected_genres_length()
         {
-            return selectedGenres.Count;
+            return checkedBoxes;
         }
 
         private void assignGenres()

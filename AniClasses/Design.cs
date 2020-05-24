@@ -48,8 +48,7 @@ namespace AniHelper.AniClasses
             MainPanel.Children.Add(inputButton);
 
             makeNameContainer();
-            parse.setPanel(MainPanel);
-
+            makeSubmitButton();
         }
 
         private void InputButton_KeyDown(object sender, KeyEventArgs e)
@@ -62,7 +61,8 @@ namespace AniHelper.AniClasses
 
         private async void InputButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            if (input.Text == "" || collector.searcher.complete == false)
+            if (input.Text == "" || collector.searcher.complete == false || 
+                collector.searcher.namePanel.Children.Count >= 3)
             {
                 return;
             }
@@ -99,7 +99,7 @@ namespace AniHelper.AniClasses
 
             if ((bool)box.IsChecked)
             {
-                if (collector.get_selected_genres_length() >= 3)
+                if (collector.get_checkbox_selected_genres_length() >= 3)                  
                 {
                     errorOverflow.error(MainPanel);
 
@@ -107,10 +107,12 @@ namespace AniHelper.AniClasses
                     return;
                 }
                 collector.add_genre(box.Content.ToString());
+                collector.checkedBoxes++;
             }
             else
             {
                 collector.remove_genre(box.Content.ToString());
+                collector.checkedBoxes--;
             }
 
         }
@@ -131,9 +133,22 @@ namespace AniHelper.AniClasses
 
         private void makeNameContainer()
         {
-            collector.searcher.namePanel = new StackPanel();
-            collector.searcher.namePanel.Orientation = Orientation.Horizontal;
+            collector.searcher.init_namepanel();
             MainPanel.Children.Add(collector.searcher.namePanel);
+        }
+
+        private void makeSubmitButton()
+        {
+            Button submit = new Button();
+            submit.Content = "Submit";
+            submit.Width = 70;
+            submit.Click += Submit_Click;
+            MainPanel.Children.Add(submit);
+        }
+
+        private void Submit_Click(object sender, RoutedEventArgs e)
+        {
+            /* Proceed to second window */
         }
     }
 }

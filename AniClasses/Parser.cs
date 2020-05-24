@@ -14,13 +14,13 @@ namespace AniHelper.AniClasses
 {
     public class Parser
     {
+        private IDbConnection AniConn;
 
-        StackPanel testPanel;
-
-        public void setPanel(StackPanel appliedPanel)
+        public Parser()
         {
-            this.testPanel = appliedPanel;
+            AniConn = new System.Data.SqlClient.SqlConnection(connPt("AniHelper"));
         }
+
         public String returnInfo(String url)
         {
             HtmlWeb web = new HtmlWeb();
@@ -30,13 +30,21 @@ namespace AniHelper.AniClasses
 
         public String[] getGenres()
         {
-            IDbConnection AniConn = new System.Data.SqlClient.SqlConnection(connPt("AniHelper"));
             AniConn.Open();
 
             String[] genres = AniConn.Query<String>(@"use AniHelper SELECT Genre FROM GenreList").ToArray();
 
             AniConn.Close();
             return genres;
+        }
+
+        public void TblUpdate(String url, String genre, int weight)
+        {
+            AniConn.Open();
+
+            var result = AniConn.Query("InsertChosenGenres", new { Genre = genre, Weight = weight }, 
+            commandType: CommandType.StoredProcedure);
+            
         }
 
         public String connPt(String id)
