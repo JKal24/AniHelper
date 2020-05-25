@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace AniHelper.AniClasses
 {
-    class GenreError
+    class Error
     {
         private StackPanel exceededChoices = new StackPanel();
         private bool errorMessage = false;

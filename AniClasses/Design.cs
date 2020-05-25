@@ -12,7 +12,7 @@ namespace AniHelper.AniClasses
     public class Design
     {
         public GenreCollect collector = new GenreCollect();
-        private GenreError errorOverflow = new GenreError();
+        private Error errorOverflow = new Error();
 
         public StackPanel MainPanel;
         private TextBox input = new TextBox();

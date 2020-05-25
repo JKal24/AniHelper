@@ -21,7 +21,7 @@ namespace AniHelper.AniClasses
             AniConn = new System.Data.SqlClient.SqlConnection(connPt("AniHelper"));
         }
 
-        public String returnInfo(String url)
+        public String getAnime(String url)
         {
             HtmlWeb web = new HtmlWeb();
             var html = web.Load(url);
@@ -38,13 +38,48 @@ namespace AniHelper.AniClasses
             return genres;
         }
 
+        public List<String> getSelectedGenres()
+        {
+            AniConn.Open();
+
+            List<String> topGenres = AniConn.Query<String>("GetTopGenres", commandType: CommandType.StoredProcedure).ToList();
+
+            AniConn.Close();
+
+            return topGenres;
+        }
+
+        public int getID(String mygenre)
+        {
+            AniConn.Open();
+
+            int id = AniConn.Query<int>("get_id @genre", new { genre = mygenre }, 
+                commandType: CommandType.StoredProcedure).Single();
+
+            AniConn.Close();
+
+            return id;
+        }
+
         public void TblUpdate(String url, String genre, int weight)
         {
             AniConn.Open();
 
-            var result = AniConn.Query("InsertChosenGenres", new { Genre = genre, Weight = weight }, 
+            AniConn.Execute("InsertChosenGenres", new { Genre = genre, Weight = weight }, 
             commandType: CommandType.StoredProcedure);
-            
+
+            AniConn.Execute("OrderWeight", commandType: CommandType.StoredProcedure);
+
+            AniConn.Close();
+        }
+
+        public void TblReset()
+        {
+            AniConn.Open();
+
+            AniConn.Execute(@"use AniHelper DELETE * FROM SelectedGenres");
+
+            AniConn.Close();
         }
 
         public String connPt(String id)

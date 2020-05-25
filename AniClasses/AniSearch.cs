@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Dapper;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace AniHelper.AniClasses
         public String currentUrl;
         public StackPanel namePanel;
         public bool complete = true;
+        private Parser getInfo = new Parser();
 
         public async Task getSearchData(String searchExtension)
         {
@@ -34,11 +36,21 @@ namespace AniHelper.AniClasses
             }
         }
 
-        public async Task getAnimeList(String genre)
+        public void getAnimeList(List<String> genres)
         {
             int score = 10;
+            int id;
             String searchUrl = "https://myanimelist.net/anime.php?q=&score=" + score.ToString() + 
                 "&genre%5B%5D=" + "insert";
+
+            foreach (String genre in genres)
+            {
+                id = getInfo.getID(genre);
+                TextBlock idNum = new TextBlock();
+                idNum.Text = id.ToString();
+                namePanel.Children.Add(idNum);
+                id = 0;
+            }
         }
 
         private String transformSearchExtension(String extension)
