@@ -15,7 +15,6 @@ namespace AniHelper.AniClasses
 {
     public class GenreCollect
     {
-        public AniSearch searcher = new AniSearch();
         private Dictionary<String, int> selectedGenres = new Dictionary<string, int>();
         private String[] availableGenres;
         public int checkedBoxes = 0;
@@ -62,7 +61,30 @@ namespace AniHelper.AniClasses
 
         public void remove_genre(String val)
         {
+            if (selectedGenres[val] > 1)
+            {
+                selectedGenres[val] -= 1;
+                return;
+            }
             selectedGenres.Remove(val);
+        }
+
+        /* condenses the list of selected genres to the ones most applicable to the recommendation */
+        public List<String> sort_remove_select_gen()
+        {
+            var mylist = from pair in selectedGenres orderby pair.Value descending select pair;
+
+            List<String> topPicks = new List<String>();
+
+            foreach (KeyValuePair<String, int> myPair in mylist)
+            {
+                topPicks.Add(myPair.Key);
+                if (topPicks.Count >= 3)
+                {
+                    break;
+                }
+            }
+            return topPicks;
         }
 
     }

@@ -11,17 +11,14 @@ namespace AniHelper.AniClasses
 {
     public class Design
     {
-        public GenreCollect collector = new GenreCollect();
-        private Error errorOverflow = new Error();
+        private AniSearch searcher = new AniSearch();
 
-        public StackPanel MainPanel;
+        private StackPanel MainPanel;
         private TextBox input = new TextBox();
-        private Parser parse = new Parser();
 
-        /* set a direct link to the main window's panel */
-        public void setMainPanel(StackPanel setPanel)
+        public void assignPanel(StackPanel mainPanel)
         {
-            MainPanel = setPanel;
+            this.MainPanel = mainPanel;
         }
 
         /* add search functionality that works with AniSearch and gets info from the main window */
@@ -61,15 +58,15 @@ namespace AniHelper.AniClasses
 
         private async void InputButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            if (input.Text == "" || collector.searcher.complete == false || 
-                collector.searcher.namePanel.Children.Count >= 3)
+            if (input.Text == "" || searcher.complete == false || 
+                searcher.namePanel.Children.Count >= 3)
             {
                 return;
             }
 
-            collector.searcher.complete = false;
-            await collector.searcher.getSearchData(input.Text);
-            collector.add_named_genres(collector.searcher.addName());
+            searcher.complete = false;
+            await searcher.getSearchData(input.Text);
+            searcher.collector.add_named_genres(searcher.addName());
         }
 
         public void addGenreButtons(Grid genreGrid)
@@ -77,7 +74,7 @@ namespace AniHelper.AniClasses
             /* initialize starting screen with the check buttons to choose from */
             int[] row_column = { 0, 0 };
 
-            foreach (String button in collector.get_available_genres())
+            foreach (String button in searcher.collector.get_available_genres())
             {
                 CheckBox box = new CheckBox();
 
@@ -95,24 +92,25 @@ namespace AniHelper.AniClasses
 
         private void Box_Click(object sender, RoutedEventArgs e)
         {
+            Error errorOverflow = new Error(MainPanel);
             CheckBox box = (CheckBox)sender;
 
             if ((bool)box.IsChecked)
             {
-                if (collector.get_checkbox_selected_genres_length() >= 3)                  
+                if (searcher.collector.get_checkbox_selected_genres_length() >= 3)                  
                 {
-                    errorOverflow.error(MainPanel);
+                    errorOverflow.error();
 
                     box.IsChecked = false;
                     return;
                 }
-                collector.add_genre(box.Content.ToString());
-                collector.checkedBoxes++;
+                searcher.collector.add_genre(box.Content.ToString());
+                searcher.collector.checkedBoxes++;
             }
             else
             {
-                collector.remove_genre(box.Content.ToString());
-                collector.checkedBoxes--;
+                searcher.collector.remove_genre(box.Content.ToString());
+                searcher.collector.checkedBoxes--;
             }
 
         }
@@ -133,8 +131,8 @@ namespace AniHelper.AniClasses
 
         private void makeNameContainer()
         {
-            collector.searcher.init_namepanel();
-            MainPanel.Children.Add(collector.searcher.namePanel);
+            searcher.init_namepanel();
+            MainPanel.Children.Add(searcher.namePanel);
         }
 
         private void makeSubmitButton()
@@ -149,6 +147,8 @@ namespace AniHelper.AniClasses
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             /* Proceed to second window */
+
+            searcher.getAnimeList();
         }
     }
 }

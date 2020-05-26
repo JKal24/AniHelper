@@ -53,7 +53,7 @@ namespace AniHelper.AniClasses
         {
             AniConn.Open();
 
-            int id = AniConn.Query<int>("get_id @genre", new { genre = mygenre }, 
+            int id = AniConn.Query<int>("get_id", new { genre = mygenre }, 
                 commandType: CommandType.StoredProcedure).Single();
 
             AniConn.Close();
@@ -61,25 +61,16 @@ namespace AniHelper.AniClasses
             return id;
         }
 
-        public void TblUpdate(String url, String genre, int weight)
+        public List<String> TblGetIDString(List<String> topPicks)
         {
-            AniConn.Open();
+            List<String> ids = new List<String>();
 
-            AniConn.Execute("InsertChosenGenres", new { Genre = genre, Weight = weight }, 
-            commandType: CommandType.StoredProcedure);
+            foreach (String pick in topPicks)
+            {
+                ids.Add(getID(pick).ToString());
+            }
 
-            AniConn.Execute("OrderWeight", commandType: CommandType.StoredProcedure);
-
-            AniConn.Close();
-        }
-
-        public void TblReset()
-        {
-            AniConn.Open();
-
-            AniConn.Execute(@"use AniHelper DELETE * FROM SelectedGenres");
-
-            AniConn.Close();
+            return ids;
         }
 
         public String connPt(String id)

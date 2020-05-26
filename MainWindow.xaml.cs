@@ -16,10 +16,9 @@ namespace AniHelper
         {
             InitializeComponent();
 
-            elements.setMainPanel(MainPanel);
-
+            /* Design the panel to ask the user for info */
+            elements.assignPanel(MainPanel);
             elements.addGenreButtons(genreGrid);
-
             elements.addSearchFunction();
         }
     }

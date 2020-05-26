@@ -18,16 +18,22 @@ namespace AniHelper.AniClasses
         public String currentUrl;
         public StackPanel namePanel;
         public bool complete = true;
+
+        public GenreCollect collector = new GenreCollect();
         private Parser getInfo = new Parser();
 
         public async Task getSearchData(String searchExtension)
         {
+            /* Access the search url and input the Anime name to get the first result */
+
             String searchUrl = "https://myanimelist.net/search/all?q=";
             var http = new HttpClient();
             String html;
 
             try
             {
+                /* Parse through the html and use regex to find the url that leads to the Anime's page */
+
                 html = await http.GetStringAsync((searchUrl + transformSearchExtension(searchExtension)));
                 currentUrl = getMainSite(html);
             } catch
@@ -36,36 +42,46 @@ namespace AniHelper.AniClasses
             }
         }
 
-        public void getAnimeList(List<String> genres)
+        public void getAnimeList()
         {
-            int score = 10;
-            int id;
-            String searchUrl = "https://myanimelist.net/anime.php?q=&score=" + score.ToString() + 
-                "&genre%5B%5D=" + "insert";
+            /* gets a list of potential anime to recommend */
 
-            foreach (String genre in genres)
+            int score = 10;
+            int myid;
+
+            List<String> ids = getInfo.TblGetIDString(collector.sort_remove_select_gen());
+            String searchUrl = "https://myanimelist.net/anime.php?q=&score=" + score.ToString() +
+                "&genre%5B%5D="; /* + "insert id" */
+
+            foreach (String id in ids)
             {
-                id = getInfo.getID(genre);
+                myid = getInfo.getID(id);
                 TextBlock idNum = new TextBlock();
                 idNum.Text = id.ToString();
                 namePanel.Children.Add(idNum);
-                id = 0;
+                myid = 0;
             }
         }
 
         private String transformSearchExtension(String extension)
         {
+            /* transforms so that it can be used in the url search key */
+
             return (String.Join("%20", extension.Split(' ')));
         }
 
         private String getMainSite(String url)
         {
+            /* Regex matcher used when accessing the search page on MAL */
+
             Match getSiteInfo = Regex.Match(url, @"https://?myanimelist.net/anime/\d*\/\w*");
             return getSiteInfo.Value;
         }
 
         public HtmlNodeCollection addName()
         {
+            /* HTMLAgilityPack used, lists the anime that the user has selected */
+
             HtmlWeb httpAccess = new HtmlWeb();
             var html = httpAccess.Load(currentUrl);
             var node = html.DocumentNode.SelectSingleNode("//span[@itemprop='name']//text()");
@@ -81,6 +97,8 @@ namespace AniHelper.AniClasses
 
         public void init_namepanel()
         {
+            /* puts the name panel onto the main panel in the main window */
+
             namePanel = new StackPanel();
             namePanel.Orientation = Orientation.Horizontal;
             namePanel.HorizontalAlignment = HorizontalAlignment.Center;
