@@ -46,21 +46,44 @@ namespace AniHelper.AniClasses
         {
             /* gets a list of potential anime to recommend */
 
-            int score = 10;
-            int myid;
-
+            int[] scores = { 9, 8, 7 };
             List<String> ids = getInfo.TblGetIDString(collector.sort_remove_select_gen());
-            String searchUrl = "https://myanimelist.net/anime.php?q=&score=" + score.ToString() +
-                "&genre%5B%5D="; /* + "insert id" */
+            List<String> AniNames = new List<String>();
 
-            foreach (String id in ids)
+            String searchUrl = "https://myanimelist.net/anime.php?q=" + "&genre%5B%5D=" + ids[0]
+                + "&genre%5B%5D=" + ids[1] + "&genre%5B%5D=" + ids[2] + "&score=";
+
+            foreach (int rank in scores)
             {
-                myid = getInfo.getID(id);
-                TextBlock idNum = new TextBlock();
-                idNum.Text = id.ToString();
-                namePanel.Children.Add(idNum);
-                myid = 0;
+                /* Use available html to acces a site and extract some info */
+                String nextSite = searchUrl + rank;
+                HtmlWeb httpAccess = new HtmlWeb();
+                var html = httpAccess.Load(nextSite);
+                var nodes = html.DocumentNode.SelectNodes("//tr");
+                nodes.RemoveAt(0);
+
+                AniNames = AniNames.Concat(parseNode(nodes)).ToList();
             }
+        }
+
+        private List<String> parseNode(HtmlNodeCollection nodes)
+        {
+            List<String> trsfmNodes = new List<String>();
+            foreach (HtmlNode node in nodes)
+            {
+                trsfmNodes.Add(node.InnerText);
+            }
+            return trsfmNodes;
+        }
+
+        private void extractNodes(HtmlNodeCollection nodes)
+        {
+            /* Implement data collection and input it into a parser to put it into a table */
+            /* The second window will access the table and recommend anime */
+            String aniName = nodes[1].SelectSingleNode("//a").SelectSingleNode("//strong").InnerText;
+            String score;
+
+            String info;
         }
 
         private String transformSearchExtension(String extension)

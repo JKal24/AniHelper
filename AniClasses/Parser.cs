@@ -54,7 +54,7 @@ namespace AniHelper.AniClasses
             AniConn.Open();
 
             int id = AniConn.Query<int>("get_id", new { genre = mygenre }, 
-                commandType: CommandType.StoredProcedure).Single();
+                commandType: CommandType.StoredProcedure).SingleOrDefault();
 
             AniConn.Close();
 

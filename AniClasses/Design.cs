@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -76,10 +77,11 @@ namespace AniHelper.AniClasses
 
             foreach (String button in searcher.collector.get_available_genres())
             {
+                String buttonName = Regex.Replace(button, " |-", "");
                 CheckBox box = new CheckBox();
 
-                box.Name = button;
-                box.Content = button;
+                box.Name = buttonName;
+                box.Content = buttonName;
                 box.Width = 140;
                 box.Click += Box_Click;
 
