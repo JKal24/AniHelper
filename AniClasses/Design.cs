@@ -151,6 +151,13 @@ namespace AniHelper.AniClasses
             /* Proceed to second window */
 
             searcher.getAnimeList();
+
+            foreach (String[] info in searcher.recommendedAnime)
+            {
+                TextBlock item = new TextBlock();
+                item.Text = (info[0] + info[1] + info[2]);
+                MainPanel.Children.Add(item);
+            }
         }
     }
 }

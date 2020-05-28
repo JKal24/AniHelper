@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AniHelper.AniClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,17 @@ namespace AniHelper
     /// </summary>
     public partial class SecondWindow : Window
     {
+        AniSearch searcher;
+
         public SecondWindow()
         {
             InitializeComponent();
+            searcher = new AniSearch();
         }
 
-
+        private void updateRecommendation()
+        {
+            /* Access SQL Table and display the next 3 listed recommendations */
+        }
     }
 }

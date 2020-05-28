@@ -21,6 +21,14 @@ namespace AniHelper.AniClasses
 
         public GenreCollect collector = new GenreCollect();
         private Parser getInfo = new Parser();
+        private List<String> watchedAnime = new List<String>();
+
+        public List<String[]> recommendedAnime { get; set; }
+
+        public AniSearch()
+        {
+            recommendedAnime = new List<String[]>();
+        }
 
         public async Task getSearchData(String searchExtension)
         {
@@ -46,44 +54,44 @@ namespace AniHelper.AniClasses
         {
             /* gets a list of potential anime to recommend */
 
-            int[] scores = { 9, 8, 7 };
             List<String> ids = getInfo.TblGetIDString(collector.sort_remove_select_gen());
-            List<String> AniNames = new List<String>();
 
-            String searchUrl = "https://myanimelist.net/anime.php?q=" + "&genre%5B%5D=" + ids[0]
-                + "&genre%5B%5D=" + ids[1] + "&genre%5B%5D=" + ids[2] + "&score=";
+            String searchUrl = "https://myanimelist.net/anime.php?q=";
+            searchUrl += addSearchExtension(ids);
 
-            foreach (int rank in scores)
-            {
-                /* Use available html to acces a site and extract some info */
-                String nextSite = searchUrl + rank;
-                HtmlWeb httpAccess = new HtmlWeb();
-                var html = httpAccess.Load(nextSite);
-                var nodes = html.DocumentNode.SelectNodes("//tr");
-                nodes.RemoveAt(0);
+            /* Use available html to acces a site and extract some info */
+            HtmlWeb httpAccess = new HtmlWeb();
+            var html = httpAccess.Load(searchUrl);
+            var nodes = html.DocumentNode.SelectNodes("//div[@class='js-categories-seasonal js-block-list list']" +
+                "/table/tr");
+            
+            nodes.RemoveAt(0);
 
-                AniNames = AniNames.Concat(parseNode(nodes)).ToList();
-            }
-        }
-
-        private List<String> parseNode(HtmlNodeCollection nodes)
-        {
-            List<String> trsfmNodes = new List<String>();
-            foreach (HtmlNode node in nodes)
-            {
-                trsfmNodes.Add(node.InnerText);
-            }
-            return trsfmNodes;
+            extractNodes(nodes);
         }
 
         private void extractNodes(HtmlNodeCollection nodes)
         {
+            /* Reset the table in case information is present from a previous attempt */
+
+            getInfo.resetRecommendationTable();
+
             /* Implement data collection and input it into a parser to put it into a table */
             /* The second window will access the table and recommend anime */
-            String aniName = nodes[1].SelectSingleNode("//a").SelectSingleNode("//strong").InnerText;
-            String score;
+            foreach (var node in nodes)
+            {
+                String aniName = node.SelectSingleNode("./td/a/strong").InnerText;
 
-            String info;
+                if (watchedAnime.Contains(aniName))
+                {
+                    break;
+                }
+                String score = node.ChildNodes[4].InnerText;
+                String info = node.SelectSingleNode("./td/div[@class='pt4']").InnerText;
+
+                /* inputs data into table */
+                getInfo.inputAnime(new string[] { aniName, score, info });
+            }
         }
 
         private String transformSearchExtension(String extension)
@@ -109,6 +117,7 @@ namespace AniHelper.AniClasses
             var html = httpAccess.Load(currentUrl);
             var node = html.DocumentNode.SelectSingleNode("//span[@itemprop='name']//text()");
             var genreNodes = html.DocumentNode.SelectNodes("//span[@itemprop='genre']//text()");
+            watchedAnime.Add(node.InnerText);
 
             TextBlock name = new TextBlock();
             name.Text = node.InnerText;
@@ -126,6 +135,17 @@ namespace AniHelper.AniClasses
             namePanel.Orientation = Orientation.Horizontal;
             namePanel.HorizontalAlignment = HorizontalAlignment.Center;
             namePanel.Margin = new Thickness(10);
+        }
+
+        private String addSearchExtension(List<String> ids)
+        {
+            String extension = "";
+            foreach (String id in ids)
+            {
+                extension += "&genre%5B%5D=";
+                extension += id;
+            }
+            return (extension += "&o=3&w=1");
         }
     }
 }

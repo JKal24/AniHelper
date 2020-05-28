@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AniHelper"
         mc:Ignorable="d"
         Title="SecondWindow" Height="450" Width="800">
-    <Grid>
+    <StackPanel Orientation="Horizontal" x:Name="ResultsPanel">
         
-    </Grid>
+    </StackPanel>
 </Window>

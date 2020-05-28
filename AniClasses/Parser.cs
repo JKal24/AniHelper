@@ -21,11 +21,23 @@ namespace AniHelper.AniClasses
             AniConn = new System.Data.SqlClient.SqlConnection(connPt("AniHelper"));
         }
 
-        public String getAnime(String url)
+        public void inputAnime(String[] data)
         {
-            HtmlWeb web = new HtmlWeb();
-            var html = web.Load(url);
-            return "beingimplemented";
+            AniConn.Open();
+
+            AniConn.Execute("Insert_Ani_Data", new { name = data[0], score = data[1], info = data[2] },
+                commandType: CommandType.StoredProcedure);
+
+            AniConn.Close();
+        }
+
+        public void resetRecommendationTable()
+        {
+            AniConn.Open();
+
+            AniConn.Execute(@"USE AniHelper GO DELETE FROM AnimeList GO");
+
+            AniConn.Close();
         }
 
         public String[] getGenres()
