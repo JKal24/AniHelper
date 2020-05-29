@@ -155,7 +155,7 @@ namespace AniHelper.AniClasses
             foreach (String[] info in searcher.recommendedAnime)
             {
                 TextBlock item = new TextBlock();
-                item.Text = (info[0] + info[1] + info[2]);
+                item.Text = (info[0] + info[1] + info[2] + info[3]);
                 MainPanel.Children.Add(item);
             }
         }

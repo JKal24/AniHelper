@@ -56,21 +56,28 @@ namespace AniHelper.AniClasses
 
             List<String> ids = getInfo.TblGetIDString(collector.sort_remove_select_gen());
 
-            String searchUrl = "https://myanimelist.net/anime.php?q=";
-            searchUrl += addSearchExtension(ids);
-
-            /* Use available html to acces a site and extract some info */
-            HtmlWeb httpAccess = new HtmlWeb();
-            var html = httpAccess.Load(searchUrl);
-            var nodes = html.DocumentNode.SelectNodes("//div[@class='js-categories-seasonal js-block-list list']" +
-                "/table/tr");
+            HtmlNodeCollection nodes = getSearchNode(ids);
             
+            if (nodes == null)
+            {
+                List<String>[] setOfIds = seperateSearch(ids);
+                foreach(List<String> indivIds in setOfIds)
+                {
+                    nodes = getSearchNode(indivIds);
+                    if (nodes == null)
+                    {
+                        break;
+                    }
+                    extractNodes(nodes, 4);
+                }
+            }
+
             nodes.RemoveAt(0);
 
-            extractNodes(nodes);
+            extractNodes(nodes, 12);
         }
 
-        private void extractNodes(HtmlNodeCollection nodes)
+        private void extractNodes(HtmlNodeCollection nodes, int howMany)
         {
             /* Reset the table in case information is present from a previous attempt */
 
@@ -78,20 +85,71 @@ namespace AniHelper.AniClasses
 
             /* Implement data collection and input it into a parser to put it into a table */
             /* The second window will access the table and recommend anime */
+
+            int limit = 0;
             foreach (var node in nodes)
             {
-                String aniName = node.SelectSingleNode("./td/a/strong").InnerText;
+                String url = getMainPrequel(node.SelectSingleNode
+                    ("./td/div[@class='picSurround']/a[@href]").GetAttributeValue("href", string.Empty));
+                var html = getHTMLDoc(url);
+
+                String aniName = html.DocumentNode.SelectSingleNode("//span[@itemprop='name']//text()").InnerText;
 
                 if (watchedAnime.Contains(aniName))
                 {
                     break;
                 }
-                String score = node.ChildNodes[4].InnerText;
-                String info = node.SelectSingleNode("./td/div[@class='pt4']").InnerText;
+                watchedAnime.Add(aniName);
+
+                String score = html.DocumentNode.SelectSingleNode("//span[@itemprop='ratingValue']").InnerText;
+                String info = html.DocumentNode.SelectSingleNode("//span[@itemprop='description']").InnerText;
+
+                recommendedAnime.Add(new string[] { aniName, score, info, url });
 
                 /* inputs data into table */
-                getInfo.inputAnime(new string[] { aniName, score, info });
+
+                getInfo.inputAnime(new string[] { aniName, score, info, url });
+
+                /* specifies a limit on how many recommendations you want to give */
+
+                limit++;
+                if (limit >= howMany)
+                {
+                    return;
+                }
+
             }
+        }
+
+        private String getMainPrequel(String url)
+        {
+            var html = getHTMLDoc(url);
+            HtmlNode prequelNode = html.DocumentNode.SelectSingleNode("//td[contains(text(),'Prequel')]");
+            if (prequelNode != null)
+            {
+                var anc = prequelNode.Ancestors().FirstOrDefault();
+                return getMainPrequel("https://myanimelist.net/" + prequelNode.Ancestors().FirstOrDefault().
+                    SelectSingleNode("./td/a[@href]").GetAttributeValue("href", string.Empty));
+            }
+            return url;
+        }
+
+        private List<String>[] seperateSearch(List<String> ids)
+        {
+            return new List<string>[] { new List<String> { ids[0], ids[1] }, new List<String> { ids[1], ids[2] },
+            new List<String> { ids[0], ids[2] }};
+        }
+
+        private HtmlNodeCollection getSearchNode(List<String> ids)
+        {
+            String searchUrl = "https://myanimelist.net/anime.php?q=";
+            searchUrl += addSearchExtension(ids);
+
+            /* Use available html to acces a site and extract some info */
+
+            var html = getHTMLDoc(searchUrl);
+            return html.DocumentNode.SelectNodes("//div[@class='js-categories-seasonal js-block-list list']" +
+                "/table/tr");
         }
 
         private String transformSearchExtension(String extension)
@@ -113,8 +171,7 @@ namespace AniHelper.AniClasses
         {
             /* HTMLAgilityPack used, lists the anime that the user has selected */
 
-            HtmlWeb httpAccess = new HtmlWeb();
-            var html = httpAccess.Load(currentUrl);
+            var html = getHTMLDoc(currentUrl);
             var node = html.DocumentNode.SelectSingleNode("//span[@itemprop='name']//text()");
             var genreNodes = html.DocumentNode.SelectNodes("//span[@itemprop='genre']//text()");
             watchedAnime.Add(node.InnerText);
@@ -146,6 +203,12 @@ namespace AniHelper.AniClasses
                 extension += id;
             }
             return (extension += "&o=3&w=1");
+        }
+
+        private HtmlDocument getHTMLDoc(String url)
+        {
+            HtmlWeb httpAccess = new HtmlWeb();
+            return httpAccess.Load(url);
         }
     }
 }

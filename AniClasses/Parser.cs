@@ -35,7 +35,7 @@ namespace AniHelper.AniClasses
         {
             AniConn.Open();
 
-            AniConn.Execute(@"USE AniHelper GO DELETE FROM AnimeList GO");
+            AniConn.Execute(@"USE AniHelper DELETE FROM AnimeList");
 
             AniConn.Close();
         }
