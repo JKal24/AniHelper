@@ -16,22 +16,13 @@ using System.Windows.Shapes;
 namespace AniHelper
 {
     /// <summary>
-    /// Interaction logic for SecondWindow.xaml
+    /// Interaction logic for Loading.xaml
     /// </summary>
-    public partial class SecondWindow : Window
+    public partial class Loading : Window
     {
-        Parser parse;
-
-        public SecondWindow()
+        public Loading()
         {
             InitializeComponent();
-            parse = new Parser();
-        }
-
-        private void updateRecommendation()
-        {
-            /* Access SQL Table and display the next 3 listed recommendations */
-            
 
         }
     }

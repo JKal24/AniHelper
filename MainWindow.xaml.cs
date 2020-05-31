@@ -19,7 +19,8 @@ namespace AniHelper
             /* Design the panel to ask the user for info */
             elements.assignPanel(MainPanel);
             elements.addGenreButtons(genreGrid);
-            elements.addSearchFunction();
+            elements.addSearchFunction(searchFunctions);
+            elements.makeSubmitButton(submitBox);
         }
     }
 }

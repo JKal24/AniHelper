@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AniHelper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="700">
+        Title="MainWindow" Height="420" Width="700">
     <StackPanel x:Name="MainPanel" x:FieldModifier="public">
         <TextBlock 
   Name="textBlock"
@@ -58,5 +58,11 @@
             </Grid.RowDefinitions>
 
         </Grid>
+        <StackPanel Background="Azure" x:Name="searchFunctions">
+            
+        </StackPanel>
+        <StackPanel Background="AntiqueWhite" x:Name="submitBox">
+            
+        </StackPanel>
     </StackPanel>
 </Window>

@@ -85,6 +85,15 @@ namespace AniHelper.AniClasses
             return ids;
         }
 
+        public void getRecommendationTbl()
+        {
+            AniConn.Open();
+
+            var results = AniConn.Query("get_recommendation", commandType: CommandType.StoredProcedure).ToList();
+
+            AniConn.Close();
+        }
+
         public String connPt(String id)
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;

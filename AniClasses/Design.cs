@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ namespace AniHelper.AniClasses
     public class Design
     {
         private AniSearch searcher = new AniSearch();
+        private Error errorOverflow;
 
         private StackPanel MainPanel;
         private TextBox input = new TextBox();
@@ -20,10 +22,11 @@ namespace AniHelper.AniClasses
         public void assignPanel(StackPanel mainPanel)
         {
             this.MainPanel = mainPanel;
+            errorOverflow = new Error(MainPanel);
         }
 
         /* add search functionality that works with AniSearch and gets info from the main window */
-        public void addSearchFunction()
+        public void addSearchFunction(StackPanel functions)
         {
             TextBlock info = new TextBlock();
             Button inputButton = new Button();
@@ -38,15 +41,15 @@ namespace AniHelper.AniClasses
             input.Width = 200;
 
             inputButton.Width = 125;
+            inputButton.Margin = new Thickness(10);
             inputButton.Click += InputButton_ClickAsync;
             inputButton.KeyDown += InputButton_KeyDown;
 
-            MainPanel.Children.Add(info);
-            MainPanel.Children.Add(input);
-            MainPanel.Children.Add(inputButton);
+            functions.Children.Add(info);
+            functions.Children.Add(input);
+            functions.Children.Add(inputButton);
 
             makeNameContainer();
-            makeSubmitButton();
         }
 
         private void InputButton_KeyDown(object sender, KeyEventArgs e)
@@ -73,6 +76,7 @@ namespace AniHelper.AniClasses
         public void addGenreButtons(Grid genreGrid)
         {
             /* initialize starting screen with the check buttons to choose from */
+
             int[] row_column = { 0, 0 };
 
             foreach (String button in searcher.collector.get_available_genres())
@@ -94,7 +98,6 @@ namespace AniHelper.AniClasses
 
         private void Box_Click(object sender, RoutedEventArgs e)
         {
-            Error errorOverflow = new Error(MainPanel);
             CheckBox box = (CheckBox)sender;
 
             if ((bool)box.IsChecked)
@@ -137,27 +140,31 @@ namespace AniHelper.AniClasses
             MainPanel.Children.Add(searcher.namePanel);
         }
 
-        private void makeSubmitButton()
+        public void makeSubmitButton(StackPanel submitBox)
         {
             Button submit = new Button();
             submit.Content = "Submit";
             submit.Width = 70;
+            submit.Margin = new Thickness(10);
             submit.Click += Submit_Click;
-            MainPanel.Children.Add(submit);
+            submitBox.Children.Add(submit);
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             /* Proceed to second window */
 
-            searcher.getAnimeList();
+            MainPanel.Visibility = Visibility.Collapsed;
 
-            foreach (String[] info in searcher.recommendedAnime)
-            {
-                TextBlock item = new TextBlock();
-                item.Text = (info[0] + info[1] + info[2] + info[3]);
-                MainPanel.Children.Add(item);
-            }
+            SecondWindow results = new SecondWindow();
+
+            searcher.getAnimeList();
+        }
+
+        private void addLoadingBox()
+        {
+            Grid loadingGrid = new Grid();
+            /* Instead of using a loading window, just hide the current content and display a message */
         }
     }
 }

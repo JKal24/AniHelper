@@ -23,13 +23,6 @@ namespace AniHelper.AniClasses
         private Parser getInfo = new Parser();
         private List<String> watchedAnime = new List<String>();
 
-        public List<String[]> recommendedAnime { get; set; }
-
-        public AniSearch()
-        {
-            recommendedAnime = new List<String[]>();
-        }
-
         public async Task getSearchData(String searchExtension)
         {
             /* Access the search url and input the Anime name to get the first result */
@@ -56,6 +49,10 @@ namespace AniHelper.AniClasses
 
             List<String> ids = getInfo.TblGetIDString(collector.sort_remove_select_gen());
 
+            /* Reset the table in case information is present from a previous attempt */
+
+            getInfo.resetRecommendationTable();
+
             HtmlNodeCollection nodes = getSearchNode(ids);
             
             if (nodes == null)
@@ -66,23 +63,23 @@ namespace AniHelper.AniClasses
                     nodes = getSearchNode(indivIds);
                     if (nodes == null)
                     {
-                        break;
+                        continue;
                     }
+
+                    nodes.RemoveAt(0);
+
                     extractNodes(nodes, 4);
                 }
+            } else
+            {
+                nodes.RemoveAt(0);
+
+                extractNodes(nodes, 12);
             }
-
-            nodes.RemoveAt(0);
-
-            extractNodes(nodes, 12);
         }
 
         private void extractNodes(HtmlNodeCollection nodes, int howMany)
         {
-            /* Reset the table in case information is present from a previous attempt */
-
-            getInfo.resetRecommendationTable();
-
             /* Implement data collection and input it into a parser to put it into a table */
             /* The second window will access the table and recommend anime */
 
@@ -97,14 +94,12 @@ namespace AniHelper.AniClasses
 
                 if (watchedAnime.Contains(aniName))
                 {
-                    break;
+                    continue;
                 }
                 watchedAnime.Add(aniName);
 
                 String score = html.DocumentNode.SelectSingleNode("//span[@itemprop='ratingValue']").InnerText;
                 String info = html.DocumentNode.SelectSingleNode("//span[@itemprop='description']").InnerText;
-
-                recommendedAnime.Add(new string[] { aniName, score, info, url });
 
                 /* inputs data into table */
 
@@ -127,7 +122,6 @@ namespace AniHelper.AniClasses
             HtmlNode prequelNode = html.DocumentNode.SelectSingleNode("//td[contains(text(),'Prequel')]");
             if (prequelNode != null)
             {
-                var anc = prequelNode.Ancestors().FirstOrDefault();
                 return getMainPrequel("https://myanimelist.net/" + prequelNode.Ancestors().FirstOrDefault().
                     SelectSingleNode("./td/a[@href]").GetAttributeValue("href", string.Empty));
             }
