@@ -25,5 +25,14 @@ namespace AniHelper
             InitializeComponent();
 
         }
+
+        public void getResultsScreen()
+        {
+            SecondWindow results = new SecondWindow();
+
+            this.Close();
+
+            results.Show();
+        }
     }
 }

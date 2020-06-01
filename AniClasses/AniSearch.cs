@@ -19,6 +19,7 @@ namespace AniHelper.AniClasses
         public StackPanel namePanel;
         public bool complete = true;
 
+        public event EventHandler<Window> swapScreen;
         public GenreCollect collector = new GenreCollect();
         private Parser getInfo = new Parser();
         private List<String> watchedAnime = new List<String>();
@@ -54,6 +55,8 @@ namespace AniHelper.AniClasses
             getInfo.resetRecommendationTable();
 
             HtmlNodeCollection nodes = getSearchNode(ids);
+
+            int limit = 6;
             
             if (nodes == null)
             {
@@ -68,24 +71,30 @@ namespace AniHelper.AniClasses
 
                     nodes.RemoveAt(0);
 
-                    extractNodes(nodes, 4);
+                    limit = extractNodes(nodes, limit, 3);
                 }
             } else
             {
                 nodes.RemoveAt(0);
 
-                extractNodes(nodes, 12);
+                extractNodes(nodes, limit);
             }
+
+            SecondWindow results = new SecondWindow();
+            swapScreen?.Invoke(this, results);
         }
 
-        private void extractNodes(HtmlNodeCollection nodes, int howMany)
+        private int extractNodes(HtmlNodeCollection nodes, int limit, int howMany = 6)
         {
             /* Implement data collection and input it into a parser to put it into a table */
             /* The second window will access the table and recommend anime */
 
-            int limit = 0;
             foreach (var node in nodes)
             {
+                if (howMany <= 0 || limit <= 0)
+                {
+                    break;
+                }
                 String url = getMainPrequel(node.SelectSingleNode
                     ("./td/div[@class='picSurround']/a[@href]").GetAttributeValue("href", string.Empty));
                 var html = getHTMLDoc(url);
@@ -107,13 +116,10 @@ namespace AniHelper.AniClasses
 
                 /* specifies a limit on how many recommendations you want to give */
 
-                limit++;
-                if (limit >= howMany)
-                {
-                    return;
-                }
-
+                howMany--;
+                limit--;
             }
+            return limit;
         }
 
         private String getMainPrequel(String url)

@@ -15,7 +15,7 @@ namespace AniHelper.AniClasses
     {
         private AniSearch searcher = new AniSearch();
         private Error errorOverflow;
-
+        private Loading loadingScreen = new Loading();
         private StackPanel MainPanel;
         private TextBox input = new TextBox();
 
@@ -154,17 +154,20 @@ namespace AniHelper.AniClasses
         {
             /* Proceed to second window */
 
-            MainPanel.Visibility = Visibility.Collapsed;
+            loadingScreen.Show();
 
-            SecondWindow results = new SecondWindow();
+            loadingScreen.ContentRendered += LoadingScreen_ContentRendered;
+        }
 
+        private void LoadingScreen_ContentRendered(object sender, EventArgs e)
+        {
+            searcher.swapScreen += Searcher_swapScreen;
             searcher.getAnimeList();
         }
 
-        private void addLoadingBox()
+        private void Searcher_swapScreen(object sender, Window e)
         {
-            Grid loadingGrid = new Grid();
-            /* Instead of using a loading window, just hide the current content and display a message */
+            loadingScreen.getResultsScreen();
         }
     }
 }

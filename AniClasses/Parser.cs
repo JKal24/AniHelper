@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using Dapper;
 using HtmlAgilityPack;
@@ -85,13 +86,15 @@ namespace AniHelper.AniClasses
             return ids;
         }
 
-        public void getRecommendationTbl()
+        public List<Results> getRecommendationTbl()
         {
             AniConn.Open();
 
-            var results = AniConn.Query("get_recommendation", commandType: CommandType.StoredProcedure).ToList();
+            var results = AniConn.Query<Results>("get_recommendation", commandType: CommandType.StoredProcedure).ToList();
 
             AniConn.Close();
+
+            return results;
         }
 
         public String connPt(String id)

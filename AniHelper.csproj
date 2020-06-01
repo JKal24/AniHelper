@@ -65,6 +65,7 @@
     <Compile Include="AniClasses\AniSearch.cs" />
     <Compile Include="AniClasses\Design.cs" />
     <Compile Include="AniClasses\Error.cs" />
+    <Compile Include="AniClasses\Results.cs" />
     <Compile Include="AniClasses\Parser.cs" />
     <Compile Include="Loading.xaml.cs">
       <DependentUpon>Loading.xaml</DependentUpon>
