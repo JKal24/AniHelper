@@ -30,7 +30,7 @@ namespace AniHelper
         {
             SecondWindow results = new SecondWindow();
 
-            this.Close();
+            this.Hide();
 
             results.Show();
         }

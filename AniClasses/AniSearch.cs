@@ -56,42 +56,54 @@ namespace AniHelper.AniClasses
 
             HtmlNodeCollection nodes = getSearchNode(ids);
 
-            int limit = 6;
-            
+            int limit = 15;
+
             if (nodes == null)
             {
-                List<String>[] setOfIds = seperateSearch(ids);
-                foreach(List<String> indivIds in setOfIds)
-                {
-                    nodes = getSearchNode(indivIds);
-                    if (nodes == null)
-                    {
-                        continue;
-                    }
-
-                    nodes.RemoveAt(0);
-
-                    limit = extractNodes(nodes, limit, 3);
-                }
+                extract_seperateNodes(ids, limit / 3);
             } else
             {
                 nodes.RemoveAt(0);
 
                 extractNodes(nodes, limit);
+
+                if (nodes.Count < limit)
+                {
+                    limit -= nodes.Count;
+                    extract_seperateNodes(ids, (int)Math.Round((double)limit / 3));
+                }
             }
 
-            SecondWindow results = new SecondWindow();
-            swapScreen?.Invoke(this, results);
+            swapScreen?.Invoke(this, new SecondWindow());
         }
 
-        private int extractNodes(HtmlNodeCollection nodes, int limit, int howMany = 6)
+        private void extract_seperateNodes(List<String> ids, int limit)
+        {
+            List<String>[] setOfIds = seperateSearch(ids);
+            limit /= 3;
+
+            foreach (List<String> indivIds in setOfIds)
+            {
+                HtmlNodeCollection collectNodes = getSearchNode(indivIds);
+                if (collectNodes == null)
+                {
+                    continue;
+                }
+
+                collectNodes.RemoveAt(0);
+
+                extractNodes(collectNodes, limit);
+            }
+        }
+
+        private int extractNodes(HtmlNodeCollection nodes, int limit)
         {
             /* Implement data collection and input it into a parser to put it into a table */
             /* The second window will access the table and recommend anime */
 
             foreach (var node in nodes)
             {
-                if (howMany <= 0 || limit <= 0)
+                if (limit <= 0)
                 {
                     break;
                 }
@@ -116,7 +128,6 @@ namespace AniHelper.AniClasses
 
                 /* specifies a limit on how many recommendations you want to give */
 
-                howMany--;
                 limit--;
             }
             return limit;
@@ -136,8 +147,8 @@ namespace AniHelper.AniClasses
 
         private List<String>[] seperateSearch(List<String> ids)
         {
-            return new List<string>[] { new List<String> { ids[0], ids[1] }, new List<String> { ids[1], ids[2] },
-            new List<String> { ids[0], ids[2] }};
+            return new List<string>[] { new List<String> { ids[0], ids[1] }, new List<String> { ids[0], ids[2] },
+            new List<String> { ids[1], ids[2] }};
         }
 
         private HtmlNodeCollection getSearchNode(List<String> ids)

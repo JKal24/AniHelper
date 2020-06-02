@@ -30,27 +30,40 @@ namespace AniHelper
             InitializeComponent();
             parse = new Parser();
             results = parse.getRecommendationTbl();
+            this.myLimit = results.Count;
 
+            this.SizeToContent = SizeToContent.WidthAndHeight;
+            this.MaxHeight = 1500;
+            this.MaxWidth = 2000;
             designWindow();
         }
+
+        public int myLimit { get; set; }
+
+        public Button displayMore { get; set; }
 
         private void designWindow(int start = 0)
         {
             makeHeader();
 
-            /* Finish putting borders on seperate rows */
-            Border row1Border = new Border();
-            
+            /* Get a button that parses through the available recommendations */
 
-            Button displayMore = new Button();
-            displayMore.Content = "More Recommendations";
-            displayMore.Click += DisplayMore_Click;
+            displayMore = new Button();
+            editButton();
+            displayMore.Margin = new Thickness(15);
             Grid.SetColumn(displayMore, 1);
             Grid.SetRow(displayMore, 2);
             mainGrid.Children.Add(displayMore);
 
             index = createRecommendation(start);
         }
+
+        private void editButton()
+        {
+            displayMore.Content = "More Recommendations";
+            displayMore.Click += DisplayMore_Click;
+        }
+
 
         private void DisplayMore_Click(object sender, RoutedEventArgs e)
         {
@@ -61,11 +74,15 @@ namespace AniHelper
         {
             /* Access SQL Table and display the next 3 listed recommendations */
 
-            numListing = Math.Min(numListing, results.Count - index);
+            numListing = Math.Min(numListing, myLimit - index);
 
             for (int parse = index; parse < index + numListing; parse++)
             {
                 createIndividualRecommendation(results[parse], parse - index);
+                if (repeatRecommendation(parse - index))
+                {
+                    return 0;
+                }
             }
 
             return index + 3;
@@ -75,9 +92,11 @@ namespace AniHelper
         {
             TextBlock title = new TextBlock();
             title.Text = "Anime Recommendations";
-            title.Background = Brushes.Aquamarine;
+            title.Background = Brushes.LightBlue;
+            title.HorizontalAlignment = HorizontalAlignment.Center;
+            title.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetRow(title, 0);
-            Grid.SetColumnSpan(title, 2);
+            Grid.SetColumnSpan(title, 3);
 
             mainGrid.Children.Add(title);
         }
@@ -89,13 +108,14 @@ namespace AniHelper
             TextBlock nameAndScore = new TextBlock();
             TextBlock description = new TextBlock();
 
-            nameAndScore.Text = result.Name + " " + result.Score.ToString();
+            nameAndScore.Text = result.Name + " Score: " + result.Score.ToString();
             nameAndScore.Margin = new Thickness(10);
             nameAndScore.Background = Brushes.LightBlue;
 
             description.Text = result.Info;
             description.Margin = new Thickness(10);
             description.Background = Brushes.LightBlue;
+            description.TextWrapping = TextWrapping.WrapWithOverflow;
 
             infoPanel.Children.Add(nameAndScore);
             infoPanel.Children.Add(description);
@@ -103,6 +123,7 @@ namespace AniHelper
             Grid.SetColumn(infoPanel, position);
 
             mainGrid.Children.Add(infoPanel);
+            this.myLimit--;
         } 
 
         private void updateRecommendation()
@@ -110,6 +131,27 @@ namespace AniHelper
             mainGrid.Children.Clear();
 
             designWindow(index);
+        }
+
+        private bool repeatRecommendation(int position)
+        {
+            if (myLimit <= position)
+            {
+                displayMore.Content = "Repeat";
+                displayMore.Click += DisplayMore_Click1;
+                return true;
+            }
+            return false;
+        }
+
+        private void DisplayMore_Click1(object sender, RoutedEventArgs e)
+        {
+            editButton();
+        }
+
+        private String editWords(String description)
+        {
+            return "";
         }
     }
 }
