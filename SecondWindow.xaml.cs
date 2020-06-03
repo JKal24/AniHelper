@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,6 @@ namespace AniHelper
     {
         Parser parse;
         List<Results> results;
-        int index;
 
         public SecondWindow()
         {
@@ -31,46 +31,48 @@ namespace AniHelper
             parse = new Parser();
             results = parse.getRecommendationTbl();
             this.myLimit = results.Count;
+            this.index = 0;
 
             this.SizeToContent = SizeToContent.WidthAndHeight;
             this.MaxHeight = 1500;
             this.MaxWidth = 2000;
+            makeButton();
             designWindow();
         }
+
+        public int index { get; set; }
 
         public int myLimit { get; set; }
 
         public Button displayMore { get; set; }
 
-        private void designWindow(int start = 0)
+        private void designWindow()
         {
+            /* Makes a title and button to parse through recommendations */
+
             makeHeader();
+            makeButton();
 
-            /* Get a button that parses through the available recommendations */
+            index = createRecommendation();
+        }
 
+        private void makeButton()
+        {
             displayMore = new Button();
-            editButton();
+            displayMore.Content = "More Recommendations";
+            displayMore.Click += DisplayMore_Click;
             displayMore.Margin = new Thickness(15);
             Grid.SetColumn(displayMore, 1);
             Grid.SetRow(displayMore, 2);
             mainGrid.Children.Add(displayMore);
-
-            index = createRecommendation(start);
         }
-
-        private void editButton()
-        {
-            displayMore.Content = "More Recommendations";
-            displayMore.Click += DisplayMore_Click;
-        }
-
 
         private void DisplayMore_Click(object sender, RoutedEventArgs e)
         {
             updateRecommendation();
         }
 
-        private int createRecommendation(int index, int numListing = 3)
+        private int createRecommendation(int numListing = 3)
         {
             /* Access SQL Table and display the next 3 listed recommendations */
 
@@ -79,13 +81,20 @@ namespace AniHelper
             for (int parse = index; parse < index + numListing; parse++)
             {
                 createIndividualRecommendation(results[parse], parse - index);
-                if (repeatRecommendation(parse - index))
-                {
-                    return 0;
-                }
             }
+            index += numListing;
+            if (repeatRecommendation())
+            {
+                return 0;
+            }
+            return index;
+        }
 
-            return index + 3;
+        private void updateRecommendation()
+        {
+            mainGrid.Children.Clear();
+
+            designWindow();
         }
 
         private void makeHeader()
@@ -108,11 +117,11 @@ namespace AniHelper
             TextBlock nameAndScore = new TextBlock();
             TextBlock description = new TextBlock();
 
-            nameAndScore.Text = result.Name + " Score: " + result.Score.ToString();
+            nameAndScore.Text = editWords(result.Name) + " Score: " + result.Score.ToString();
             nameAndScore.Margin = new Thickness(10);
             nameAndScore.Background = Brushes.LightBlue;
 
-            description.Text = result.Info;
+            description.Text = editWords(result.Info);
             description.Margin = new Thickness(10);
             description.Background = Brushes.LightBlue;
             description.TextWrapping = TextWrapping.WrapWithOverflow;
@@ -123,35 +132,25 @@ namespace AniHelper
             Grid.SetColumn(infoPanel, position);
 
             mainGrid.Children.Add(infoPanel);
-            this.myLimit--;
         } 
 
-        private void updateRecommendation()
+        private bool repeatRecommendation()
         {
-            mainGrid.Children.Clear();
-
-            designWindow(index);
-        }
-
-        private bool repeatRecommendation(int position)
-        {
-            if (myLimit <= position)
+            if (myLimit <= index)
             {
                 displayMore.Content = "Repeat";
-                displayMore.Click += DisplayMore_Click1;
                 return true;
             }
             return false;
         }
 
-        private void DisplayMore_Click1(object sender, RoutedEventArgs e)
-        {
-            editButton();
-        }
-
         private String editWords(String description)
         {
-            return "";
+            description = Regex.Replace(description, @"&#039;", "'");
+            description = Regex.Replace(description, @"&quot;", "\"");
+            description = Regex.Replace(description, @"&mdash;", "-");
+            description = Regex.Replace(description, @"&amp;", "&");
+            return description;
         }
     }
 }

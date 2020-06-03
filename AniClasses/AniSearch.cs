@@ -56,6 +56,8 @@ namespace AniHelper.AniClasses
 
             HtmlNodeCollection nodes = getSearchNode(ids);
 
+            /* specifies a limit on how many recommendations you want to give */
+
             int limit = 15;
 
             if (nodes == null)
@@ -80,7 +82,6 @@ namespace AniHelper.AniClasses
         private void extract_seperateNodes(List<String> ids, int limit)
         {
             List<String>[] setOfIds = seperateSearch(ids);
-            limit /= 3;
 
             foreach (List<String> indivIds in setOfIds)
             {
@@ -119,14 +120,21 @@ namespace AniHelper.AniClasses
                 }
                 watchedAnime.Add(aniName);
 
-                String score = html.DocumentNode.SelectSingleNode("//span[@itemprop='ratingValue']").InnerText;
+                string score;
+                var scoreData = html.DocumentNode.SelectSingleNode("//span[@itemprop='ratingValue']");
+                if (scoreData != null)
+                {
+                    score = scoreData.InnerText;
+                } else
+                {
+                    score = "0";
+                }
+
                 String info = html.DocumentNode.SelectSingleNode("//span[@itemprop='description']").InnerText;
 
                 /* inputs data into table */
 
                 getInfo.inputAnime(new string[] { aniName, score, info, url });
-
-                /* specifies a limit on how many recommendations you want to give */
 
                 limit--;
             }
@@ -220,6 +228,15 @@ namespace AniHelper.AniClasses
         {
             HtmlWeb httpAccess = new HtmlWeb();
             return httpAccess.Load(url);
+        }
+
+        private String checkScore(string score)
+        {
+            if (score == null)
+            {
+                return "N/A";
+            }
+            return score;
         }
     }
 }

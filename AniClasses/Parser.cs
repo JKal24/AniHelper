@@ -51,17 +51,6 @@ namespace AniHelper.AniClasses
             return genres;
         }
 
-        public List<String> getSelectedGenres()
-        {
-            AniConn.Open();
-
-            List<String> topGenres = AniConn.Query<String>("GetTopGenres", commandType: CommandType.StoredProcedure).ToList();
-
-            AniConn.Close();
-
-            return topGenres;
-        }
-
         public int getID(String mygenre)
         {
             AniConn.Open();
